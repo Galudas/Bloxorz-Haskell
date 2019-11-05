@@ -8,19 +8,6 @@ import Data.Maybe
 
 import qualified Data.Set as S
 
-{-
-    *** TODO ***
-
-    Tipul unei nod utilizat în procesul de căutare. Recomandăm reținerea unor
-    informații legate de:
-
-    * stare;
-    * acțiunea care a condus la această stare;
-    * nodul părinte, prin explorarea căruia a fost obținut nodul curent;
-    * adâncime
-    * copiii, ce vor desemna stările învecinate
--}
-
 data Node s a = Node{
     
     state :: s ,
@@ -33,22 +20,9 @@ data Node s a = Node{
                 
 
 
-{-
-    *** TODO ***
-
-    Întoarce starea stocată într-un nod.
--}
 
 nodeState :: Node s a -> s
 nodeState n = (state n)
-
-{-
-    *** TODO ***
-
-    Generarea întregului spațiu al stărilor 
-    Primește starea inițială și creează nodul corespunzător acestei stări, 
-    având drept copii nodurile succesorilor stării curente.
--}
 
 createStateSpace :: (ProblemState s a) => s -> Node s a
 createStateSpace s = Node {
@@ -66,8 +40,6 @@ instance Eq s => Eq (Node s a) where
 instance Ord s => Ord (Node s a) where
    compare (Node s1 _ _ _ _ ) (Node s2 _ _ _ _ ) = (compare s1  s2)
 {-
-    *** TODO PENTRU BONUS ***
-
     Ordonează întreg spațiul stărilor după euristica din ProblemState. 
     Puteți folosi `sortBy` din Data.List.
 -}
@@ -77,7 +49,6 @@ orderStateSpace = undefined
 
 
 {-
-    *** TODO ***
 
     Întoarce lista nodurilor rezultate prin parcurgerea limitată în adâncime
     a spațiului stărilor, pornind de la nodul dat ca parametru.
@@ -106,7 +77,7 @@ limitedDfs :: (ProblemState s a, Ord s)
 limitedDfs start height = (reverse (snd (helperLimitedDfs start height (S.insert (state start)(S.empty) , [start]))))
 
 {-
-    *** TODO ***
+ 
 
     Explorează în adâncime spațiul stărilor, utilizând adâncire iterativă,
     pentru determinarea primei stări finale întâlnite.
@@ -136,7 +107,6 @@ iterativeDeepening start_node = iterativeDeepeningHelper start_node 0 0 (limited
     
 
 {-
-    *** TODO ***
 
     Pornind de la un nod, reface calea către nodul inițial, urmând legăturile
     către părinți.
@@ -153,8 +123,6 @@ extractPath :: Node s a -> [(a, s)]
 extractPath start_node = extractPathHelper start_node []
 
 {-
-    *** TODO ***
-
     Pornind de la o stare inițială, se folosește de iterativeDeepening pentru 
     a găsi prima stare finală și reface calea către nodul inițial folosind 
     extractPath. 
