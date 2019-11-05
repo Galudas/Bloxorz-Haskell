@@ -3,24 +3,24 @@ Pentru rularea testelor:
  
       *BloxorzTest.hs> main                      ---> rulează toate testele 
       *BloxorzTest.hs> runTestPP nume_test       ---> rulează un test anume,
-      												  cu o valoare din:
-													     [ testAddObject
-													     , testShowLevels
-													     , testMove
-													     , testActivate
-													     , testLimitedDfs
-													     , testIterativeDeepening
-													     , testExtractPath
-													     , testSuccessors
-													     , testIsGoal
-													     , testSolve
-													     , testHeuristic
-													     ]
+						  cu o valoare din:
+							     [ testAddObject
+							     , testShowLevels
+							     , testMove
+							     , testActivate
+							     , testLimitedDfs
+							     , testIterativeDeepening
+							     , testExtractPath
+							     , testSuccessors
+							     , testIsGoal
+							     , testSolve
+							     , testHeuristic
+							     ]
 
 Pentru a juca în linia de comandă:
       -- setati workingOs la Windows sau Linux
        
-      stack exec ghci Interactive.hs 
+      stack exec ghci Interactive.hs -- comanda pentru a putea in "joc"
  
       *Interactvie.hs> play level0               ---> pornește în linia de 
                                                       comandă level0 
