@@ -8,11 +8,6 @@ module Bloxorz where
 import ProblemState
 import qualified Data.Array as A
 
-{-
-    Caracterele ce vor fi printate pentru fiecare tip de obiect din joc
-    Puteți înlocui aceste caractere cu orice, în afară de '\n'.
--}
----------NU UITA ------ TREBUIE SCHIMBATA LOGICA-----------------ACUM AI LISTA DE POZITII PENTRU BLOC, NU MAI AI O SINGURA PERECHE 
 hardTile :: Char
 hardTile = '▒'
 
@@ -72,41 +67,12 @@ data Level =  Level  { playground :: (A.Array Position Cell) ,
 
 
 
-{-
-    *** Opțional ***
-
-    Dacă aveți nevoie de o funcționalitate particulară,
-    instantiati explicit clasele Eq și Ord pentru Level.
-    În cazul acesta, eliminați deriving (Eq, Ord) din Level.
--}
-
--- instance Eq Level where
---     (==) = undefined
-
--- instance Ord Level where
---     compare = undefined
-
-{-
-    *** TODO ***
-
-    Instantiati Level pe Show.
-
-    Atenție! String-ul returnat va fi urmat și precedat de un rând nou.
-    În cazul în care jocul este câștigat, la sfârșitul stringului se va mai
-    concatena mesajul "Congrats! You won!\n".
-    În cazul în care jocul este pierdut, se va mai concatena "Game Over\n".
--}
 
 message :: Bool -> Bool -> String
 message False True = "Congrats! You won!"
 message False False = "Game Over"
 message True _ = ""
---foldl * 4 [1,2,3,4] = 4*1*2*3*4
-{-
-  La afisare pun blocul pe harta, fara sa modific lista. Si afisez cell-urile, 
-  iar daca s-a incheiat afisez mesajul in functie de state-ul jocului
--}
---twodA.! [(1,0)]
+
 instance Show Level where
   show a = "\n" ++ unlines [foldl (++) "" [if x == fst (fst (block_position a) ) && y == snd (fst (block_position a)) ||
                          x == fst (snd (block_position a)) && y == snd (snd (block_position a)) 
@@ -115,29 +81,7 @@ instance Show Level where
                                     then show ((playground a) A.! (x, y)) ++ "\n" ++ message (running a) (won a)
                                     else show ((playground a) A.! (x, y)) | x <- [0..i]] | y <- [0..j]]          
                 where (i, j) = snd (A.bounds (playground a))
--- instance Show Level where
---     show (Level maps won lost _ _ _ _ _ _ block_positions)  = 
---     	"\n" ++ unlines [foldl (++) [] [if x == fst (fst block_positions) && y == snd (fst block_positions) ||
---     									   x == fst (snd block_positions) && y == snd (snd block_positions) 
--- 										then show Block
--- 										else if x == i && y == j && lost == True
---                          then  show ( maps A.! (x, y) )  ++ "\n" ++ "Game Over"
---                          else if x == i && y == j && won == True
---                               then show ( maps A.! (x, y) )  ++ "\n" ++ "Congrats! You won!"
---                               else show ( maps A.! (x, y) ) | x <- [0..i]] | y <- [0..j] ]
---         	where 
---             	i = fst(snd (A.bounds maps )) 
---             	j = snd(snd (A.bounds maps ))
-       
-{-
-    *** TODO ***
 
-    Primește coordonatele colțului din dreapta jos a hârtii și poziția inițială a blocului.
-    Întoarce un obiect de tip Level gol.
-    Implicit, colțul din stânga sus este (0, 0).        
--}
- -- [((i, j), c )  |   i <- [0..y_corner], j <- [0..x_corner] ,c<-emptySpace])
- --A.//[((snd blocks,fst blocks) ,Block)]
 emptyLevel :: Position -> Position -> Level
 emptyLevel corner blocks  = 
     Level {playground =  (A.array ((0,0) ,(snd corner, fst corner)) [((i,j),EmptySpace) | i<- [0..snd corner], j<-[0..fst corner]]),
@@ -151,21 +95,8 @@ emptyLevel corner blocks  =
                                                                          ,activate_Pos = ((0,0),(0,0))
                                                                          ,switches = (A.array ((0,0) ,(snd corner, fst corner)) [((i,j),[]) | i<- [0..snd corner], j<-[0..fst corner]])
                                                                          ,block_position = ((snd blocks,fst blocks),(snd blocks,fst blocks))}
-                                                                
-                                                                 --where list = [( (i,j) ,  EmptySpace) | i <- [0..y_block], j <- [0..x_block]] ++ 
-                                                                --             [( (y_block,x_block) ,Block)] ++
-                                                                --             [( (i,j) ,  EmptySpace) | i <- [y_block + 1..y_corner], j <- [x_block + 1 ..x_corner] ]
+                                                              
 
-
-{-
-    *** TODO ***
-
-    Adaugă o celulă de tip Tile în nivelul curent.
-    Parametrul char descrie tipul de tile adăugat:
-        'H' pentru tile hard
-        'S' pentru tile soft
-        'W' pentru winning tile
--}
 
 addTile :: Char -> Position -> Level -> Level
 addTile types tile lvl 
@@ -217,15 +148,6 @@ addTile types tile lvl
                                     activate_Pos = (activate_Pos lvl),
                                     switches = (switches lvl),
                                     block_position = (block_position lvl)}
-{-
-    *** TODO ***
-
-    Adaugă o celulă de tip Swtich în nivelul curent.
-    Va primi poziția acestuia și o listă de Position
-    ce vor desemna pozițiile în care vor apărea sau
-    dispărea Hard Cells în momentul activării/dezactivării
-    switch-ului.
--}
 
 addSwitch :: Position -> [Position] -> Level -> Level
 addSwitch (x_switch, y_switch) switches_list lvl = Level {playground = (playground lvl)A.//[((y_switch,x_switch), Switch)], 
@@ -240,16 +162,7 @@ addSwitch (x_switch, y_switch) switches_list lvl = Level {playground = (playgrou
                                                             switches = (switches lvl)A.//[((y_switch,x_switch),switches_list)]  ,
                                                             block_position = (block_position lvl)}
 
-{-
-    === MOVEMENT ===
--}
 
-{-
-    *** TODO ***
-
-    Activate va verifica dacă mutarea blocului va activa o mecanică specifică.
-    În funcție de mecanica activată, vor avea loc modificări pe hartă.
--}
 
 activateSwhitch :: [Position] ->Level-> Level
 activateSwhitch [] lvl = lvl
@@ -258,9 +171,6 @@ activateSwhitch (x:xs) lvl
      | (playground lvl)A.!(snd x,fst x) == HardTile = activateSwhitch xs (addTile 'E' x lvl)
      | otherwise = lvl
 
--- | fst (fst (activate_Pos lvl)) > (fst(snd(A.bounds (playground lvl)))) || (snd (fst (activate_Pos lvl))) > (snd(snd(A.bounds (playground lvl)))) ||
---                 (fst (snd (activate_Pos lvl))) > (fst(snd(A.bounds (playground lvl)))) || 
---                         (snd (snd (activate_Pos lvl))) > (snd(snd(A.bounds (playground lvl)))) 
 
 activate :: Cell -> Level -> Level
 activate cell_to_Check lvl 
@@ -332,12 +242,7 @@ activate cell_to_Check lvl
                                             block_position = (block_position lvl)  }    
     | otherwise  = lvl
     
-{-  
-    *** TODO ***
 
-    Mișcarea blocului în una din cele 4 direcții
-    Hint: Dacă jocul este deja câștigat sau pierdut, puteți lăsa nivelul neschimbat.
--}
 update :: (Position,Position) ->Bool->Bool->Bool->Level-> Level
 update pos blUP blEW blNS lvl = activate ((playground lvl)A.!( 0, 0))
 									  Level {  playground = (playground lvl), 
@@ -389,40 +294,11 @@ move direction lvl
      	  
         | otherwise = lvl  
 
-{-
-    *** TODO ***
-
-    Va returna True dacă jocul nu este nici câștigat, nici pierdut.
-    Este folosită în cadrul Interactive.
--}
 
 continueGame :: Level -> Bool
 continueGame lvl   
     | (won lvl) == False && (lost lvl) == False = True
     | otherwise = False
-
-{-
-    *** TODO ***
-
-    Instanțiați clasa `ProblemState` pentru jocul nostru.
-
-    Hint: Un level câștigat nu are succesori!
-    De asemenea, puteți ignora succesorii care
-    duc la pierderea unui level.
--}
-
--- data Level =  Level  { playground :: (A.Array Position Cell) , 
---                        won :: Bool, 
---                        lost :: Bool,
---                        blockUP :: Bool,
---                        blockEW :: Bool,
---                        blockNS :: Bool,
---                        running :: Bool,
---                        activate_Cell :: (Cell,Cell),
---                        activate_Pos :: (Position,Position),
---                        switches :: (A.Array Position [Position]), 
---                        block_position :: (Position,Position)}
---     deriving (Eq, Ord)
 
 
 wonGame :: Level -> Bool
@@ -449,5 +325,3 @@ instance ProblemState Level Directions where
     
     isGoal = wonGame 
 
-    -- Doar petru BONUS
-    -- heuristic = undefined
